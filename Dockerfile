@@ -7,20 +7,17 @@ RUN apk add --no-cache libc6-compat
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
+# Копируем package.json и package-lock.json перед установкой зависимостей
 COPY package.json package-lock.json ./
 
-# Устанавливаем production-зависимости
-RUN npm ci --omit=dev
+# Устанавливаем все зависимости (включая devDependencies) сразу
+RUN npm ci
 
 # Этап сборки
 FROM base AS build
 
 # Копируем весь код проекта
 COPY . .
-
-# Устанавливаем все зависимости (с devDependencies)
-RUN npm ci
 
 # Генерируем Prisma клиент (если используется Prisma)
 RUN npm run prisma generate
@@ -29,22 +26,20 @@ RUN npm run prisma generate
 RUN npm run build
 
 # Финальный продакшн-образ
-FROM base AS production
-
-# Устанавливаем переменную окружения
-ENV NODE_ENV=production 
+FROM node:20.17.0-alpine AS production
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем package.json и package-lock.json из билдового образа
-COPY --from=build /app/package.json /app/package-lock.json ./
-
-# Устанавливаем только продакшн-зависимости
-RUN npm ci --omit=dev
+# Копируем только production-зависимости из билдового образа
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/package.json /app/package-lock.json ./
 
 # Копируем собранное приложение
 COPY --from=build /app/dist ./dist
+
+# Устанавливаем переменную окружения
+ENV NODE_ENV=production 
 
 # Открываем порт (если бек работает на 3000)
 EXPOSE 3000
