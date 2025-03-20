@@ -27,7 +27,7 @@ export class TodoController {
   }
   @Patch('completed/:id')
   async updateCompleted(@Param('id') id: number, @Body() { completed }: { completed: boolean }) {
-    return await this.todoService.completedTodo(+id, completed);  // Передаем в сервис
+    return await this.todoService.completedTodo(+id, completed);
   }
   @Get('search')
   async searchTodo(@Query('query') query: string) {

@@ -1,11 +1,20 @@
-import { NestFactory } from '@nestjs/core';
-import { TodoModule } from './todo.module';
+
+import { NestFactory } from '@nestjs/core'
+import { AppModule } from './app.module'
+import { ConfigService } from '@nestjs/config';
+
+
 
 async function bootstrap() {
-  const app = await NestFactory.create(TodoModule);
-  app.enableCors({
-    origin: ['http://localhost:3001', 'http://localhost:3000','http://192.168.0.107:3000','https://todo-frontened-psychotmgs-projects.vercel.app']
-  });
-  await app.listen(process.env.PORT ?? 3001);
+	const app = await NestFactory.create(AppModule)
+	const config = app.get(ConfigService);
+	app.enableCors({
+		origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
+		credentials: true
+	})
+
+	console.log(`App is running on port ${config.getOrThrow<number>('APPLICATION_PORT')}`);
+
+	await app.listen(config.getOrThrow<number>('APPLICATION_PORT'))
 }
-bootstrap();
+bootstrap()
