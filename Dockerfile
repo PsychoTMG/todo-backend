@@ -42,7 +42,7 @@ COPY --from=build /app/dist ./dist
 ENV NODE_ENV=production 
 
 # Открываем порт (если бек работает на 3000)
-EXPOSE 3000
+EXPOSE 3001
 
 # Запускаем приложение
 CMD ["node", "dist/main"]
