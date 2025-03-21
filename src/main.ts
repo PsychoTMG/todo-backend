@@ -8,10 +8,14 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService);
+
+	const allowedOrigin = config.getOrThrow<string>('ALLOWED_ORIGIN');
+	console.log('ALLOWED_ORIGIN:', allowedOrigin); // Логируем значение переменной
+
 	app.enableCors({
-		origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
-		credentials: true
-	})
+		origin: allowedOrigin,
+		credentials: true,
+	});
 
 	console.log(`App is running on port ${config.getOrThrow<number>('APPLICATION_PORT')}`);
 
