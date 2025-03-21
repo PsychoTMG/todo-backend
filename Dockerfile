@@ -20,7 +20,7 @@ FROM base AS build
 COPY . .
 
 # Генерируем Prisma клиент (если используется Prisma)
-RUN npm run prisma generate
+RUN npm run prisma:generate
 
 # Собираем приложение NestJS
 RUN npm run build
