@@ -6,6 +6,6 @@ export class TodoController {
   constructor(private readonly todo: TodoService) { }
   @Get('hi')
   async hi() {
-    return 'Привет лысый'
+    return await this.todo.getAll()
   }
 }
