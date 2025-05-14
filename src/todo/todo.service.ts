@@ -7,6 +7,11 @@ export class TodoService {
     async getAll() {
         return await this.prisma.todo.findMany()
     }
+    async getTodo(id: number) {
+        return await this.prisma.todo.findUnique({
+            where: {id}
+        })
+    }
 }
 
 

@@ -7,10 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String  @map("hashed_password")
+  username String? @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+
+  @@map("users")
+}
+
 model Todo {
-  id          Int     @id @default(autoincrement())
-  title       String
-  isCompleted Boolean @default(false)
-  desc       String 
-  date String
+  id    Int    @id @default(autoincrement())
+  title String
+  desc  String
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updateAt    DateTime @updatedAt @map("update_at")
+  
+  isCompleted Boolean  @default(false)
+
+  @@map("todo")
 }
